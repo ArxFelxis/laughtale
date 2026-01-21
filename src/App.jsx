@@ -5,6 +5,25 @@ export default function App () {
   const [team, setTeam] = useState([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [count, setCount] = useState(0)
+
+  const handleCardClick = () => {
+    shuffleTeam()
+    incrementScore()
+  }
+
+  const shuffleTeam = () => {
+    const copyOfTeam = [...team]
+    for (let i = copyOfTeam.length - 1; i >= 1; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copyOfTeam[i], copyOfTeam[j]] = [copyOfTeam[j], copyOfTeam[i]];
+    }
+    setTeam(copyOfTeam)
+  }
+
+  const incrementScore = () => {
+    setCount(previousCount => previousCount + 1)
+  }
 
   useEffect(() => {
     const pokemonNames = ['bulbasaur', 'vulpix', 'abra', 'gastly', 'poliwag', 'sandshrew', 'machop', 'dratini', 'oddish', 'meowth', 'cubone', 'shellder']
@@ -41,18 +60,19 @@ export default function App () {
     <>
     <h1>Pokemon Memory Game</h1>
     <p>Get points by clicking on an image but don't click on any more than once!</p>
+    <p>Score: {count} Best Score: </p> 
     <div className="cards-container">
       {team.map(pokemon => 
-        <Card key={pokemon.id} pokemon={pokemon} />
+        <Card key={pokemon.id} pokemon={pokemon} handleCardClick={handleCardClick}/>
       )}
     </div>
     </>
   )
 }
 
-function Card ({pokemon}) {
+function Card ({pokemon, handleCardClick}) {
   return (
-    <button className='card' style={cardStyle}>
+    <button className='card' onClick={handleCardClick} style={cardStyle}>
       <img src={pokemon.sprites.front_default} alt={pokemon.name} style={img}/>
       <p style={cardPara}>{pokemon.name.toUpperCase()}</p>
     </button>
