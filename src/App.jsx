@@ -6,10 +6,12 @@ export default function App () {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [count, setCount] = useState(0)
+  const [bestScore, setBestScore] = useState(0)
+  const [clickedId, setClickedId] = useState([])
 
-  const handleCardClick = () => {
+  const handleCardClick = (pokeId) => {
     shuffleTeam()
-    incrementScore()
+    incrementScore(pokeId)
   }
 
   const shuffleTeam = () => {
@@ -21,8 +23,16 @@ export default function App () {
     setTeam(copyOfTeam)
   }
 
-  const incrementScore = () => {
-    setCount(previousCount => previousCount + 1)
+  const incrementScore = (pokemonId) => {
+    if (clickedId.includes(pokemonId)) {
+      setBestScore(prevBest => count > prevBest ? count : prevBest)
+      setCount(0)
+      setClickedId([])
+    }
+    else {
+      setClickedId(idArray => [...idArray, pokemonId])
+      setCount(previousCount => previousCount + 1)
+    }
   }
 
   useEffect(() => {
@@ -60,10 +70,10 @@ export default function App () {
     <>
     <h1>Pokemon Memory Game</h1>
     <p>Get points by clicking on an image but don't click on any more than once!</p>
-    <p>Score: {count} Best Score: </p> 
+    <p>Score: {count} Best Score: {bestScore}</p> 
     <div className="cards-container">
       {team.map(pokemon => 
-        <Card key={pokemon.id} pokemon={pokemon} handleCardClick={handleCardClick}/>
+        <Card key={pokemon.id} pokemon={pokemon} handleCardClick={() => handleCardClick(pokemon.id)}/>
       )}
     </div>
     </>
